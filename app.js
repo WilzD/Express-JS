@@ -1,27 +1,28 @@
 
 const express=require('express') //we are importing expressJs functionality here
 const app=express()  // express export an function we are storing it in app variable, we can see that going to file express
-
+const bodyParser=require('body-parser')
 // before passing it to the server we need to send it to middleware
 //now what is middleware?
 //nodejs is based on Middleware ,between request and response there is middleware, it is an set of function which handle I/O operations
 //new middleware is made by using use() this is an method which takes 3 argument req,res and next
-app.use((req,res,next)=>{
-    console.log('this is first middleware')
-    next() //without using next our program stoped here at this middleware, we have to use this to run next middleware
-})
-app.use((req,res,next)=>{
-    console.log('this is second middleware')
-    let obj={
-        name:'wilson'
-    }
+
+// app.use((req,res,next)=>{
+    // console.log('this is first middleware')
+    // next() //without using next our program stoped here at this middleware, we have to use this to run next middleware
+// })
+// app.use((req,res,next)=>{
+//     console.log('this is second middleware')
+//     let obj={
+//         name:'wilson'
+//     }
     // res.setHeader('') res.write() is now replaced by res.send with th help of expressJS
     //by default the content type of .send is text/html which we are doing manually previously
     // now we can send anything from here to our server, like another  html  file etc etc
     // res.send('<h1>hello from the express middleware</h1>') 
-    res.send(obj) 
+    // res.send(obj) //by deafualt the data other than string, like object bool or int is of application/JSON is content -type
 
-})
+// })
 
 // this is the old method of making a server 
 // const http=require('http')
@@ -31,3 +32,18 @@ app.use((req,res,next)=>{
 // with the help of express we can just do it in one line
 //ofcorse at the backend it is creating with the previous method but express framework make it too easy
 app.listen(3000)
+
+
+//making routes
+app.use(bodyParser.urlencoded()) // this middleware encoded our data into string for whole code, we dont have to use next() because bydefault it call next()
+app.use('/add-product',(req,res,next)=>{
+    res.send('<form method="POST" action="/products"><input type="text" name="title">Enter Product Name</input><input type="text" name="size">Enter Size</input><button type="submit">Add Product</button></form>')
+})
+app.post('/products',(req,res,next)=>{ //using post so that /products route cannot be acees from browser 
+    console.log(req.body) //here we got our input value, but before getting it we have to parse it by insatlling an package npm install --save body-parser
+    res.redirect('/')
+})
+app.use('/',(req,res,next)=>{   //write the route before the callback function
+    res.send('<h1>this is the home page</h1>')
+})
+
